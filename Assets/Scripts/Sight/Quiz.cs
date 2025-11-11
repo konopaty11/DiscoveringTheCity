@@ -6,17 +6,21 @@ using UnityEngine.UI;
 
 public class Quiz : MonoBehaviour
 {
+    [SerializeField] Sight _sight;
     [SerializeField] GameObject _quizGameObject;
     [SerializeField] Text _textPassed;
     [SerializeField] List<QuizSerializable> _quiz;
     [SerializeField] List<Text> _questions;
     [SerializeField] List<Text> _answers;
+    [SerializeField] GameObject _promptBtn;
 
     [System.Serializable]
     class QuizSerializable
     {
         public string question;
         public string answer;
+        public GameObject questionGameObject;
+        public GameObject answerGameObject;
     }
 
     const int _countQuestions = 4;
@@ -29,6 +33,13 @@ public class Quiz : MonoBehaviour
 
     public void MoveUpAnswer(Text _text)
     {
+        int _index = 0;
+        for (int i = 0; i < _usedQuiz.Count; i++)
+        {
+            if (_usedQuiz[i].answer == _text.text)
+                _index = i;
+        }
+
         for (int i = 0; i < _answers.Count; i++)
         {
             if (i != 0 && _answers[i] == _text)
@@ -36,6 +47,7 @@ public class Quiz : MonoBehaviour
                 string _prefAnswer = _answers[i - 1].text;
                 _answers[i - 1].text = _answers[i].text;
                 _answers[i].text = _prefAnswer;
+                _usedQuiz[_index].answerGameObject = _answers[i].transform.parent.gameObject;
             }
         }
     }
@@ -49,6 +61,30 @@ public class Quiz : MonoBehaviour
                 string _prefAnswer = _answers[i + 1].text;
                 _answers[i + 1].text = _answers[i].text;
                 _answers[i].text = _prefAnswer;
+            }
+        }
+    }
+
+    public void Prompt()
+    {
+        _promptBtn.SetActive(false);
+
+        for (int i = 0; i < 2; i++)
+        {
+            string _tarhetAnswer = "";
+            foreach (QuizSerializable _quiz in _usedQuiz)
+            {
+                if (_quiz.question == _questions[i].text)
+                    _tarhetAnswer = _quiz.answer;
+            }
+
+            for (int j = 0; j < _answers.Count; j++)
+            {
+                if (_answers[j].text == _tarhetAnswer)
+                {
+                    _answers[j].text = _answers[i].text;
+                    _answers[i].text = _tarhetAnswer;
+                }
             }
         }
     }
@@ -94,6 +130,7 @@ public class Quiz : MonoBehaviour
                 }
         }
 
+        _sight.CountPassedQuizs++;
         StartCoroutine(CloseQuiz());
     }
 
