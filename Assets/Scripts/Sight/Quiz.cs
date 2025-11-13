@@ -9,11 +9,13 @@ public class Quiz : MonoBehaviour
     [SerializeField] Sight _sight;
     [SerializeField] GameObject _quizGameObject;
     [SerializeField] Text _textPassed;
-    [SerializeField] List<QuizSerializable> _quiz;
+    [SerializeField] List<QuizSerializable> _quizBase;
     [SerializeField] List<Text> _questions;
     [SerializeField] List<Text> _answers;
     [SerializeField] GameObject _promptBtn;
-
+    [SerializeField] CanvasGroup _canvasGroup;
+    [SerializeField] Text _timer;
+ 
     [System.Serializable]
     class QuizSerializable
     {
@@ -24,11 +26,18 @@ public class Quiz : MonoBehaviour
     }
 
     const int _countQuestions = 4;
+
+    List<QuizSerializable> _quiz;
     List<QuizSerializable> _usedQuiz = new();
 
     void Start()
     {
         CreateQuiz();
+    }
+
+    void OnEnable()
+    {
+        StartCoroutine(Timer());
     }
 
     public void MoveUpAnswer(Text _text)
@@ -71,19 +80,19 @@ public class Quiz : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
-            string _tarhetAnswer = "";
+            string _targetAnswer = "";
             foreach (QuizSerializable _quiz in _usedQuiz)
             {
                 if (_quiz.question == _questions[i].text)
-                    _tarhetAnswer = _quiz.answer;
+                    _targetAnswer = _quiz.answer;
             }
 
             for (int j = 0; j < _answers.Count; j++)
             {
-                if (_answers[j].text == _tarhetAnswer)
+                if (_answers[j].text == _targetAnswer)
                 {
                     _answers[j].text = _answers[i].text;
-                    _answers[i].text = _tarhetAnswer;
+                    _answers[i].text = _targetAnswer;
                 }
             }
         }
@@ -91,6 +100,11 @@ public class Quiz : MonoBehaviour
 
     public void CreateQuiz()
     {
+        _usedQuiz = new();
+        _quiz = new();
+        foreach (QuizSerializable _quizSerializable in _quizBase)
+            _quiz.Add(_quizSerializable);
+
         for (int i = 0; i < _countQuestions; i++)
         {
             int _index = Random.Range(0, _quiz.Count);
@@ -134,6 +148,28 @@ public class Quiz : MonoBehaviour
         StartCoroutine(CloseQuiz());
     }
 
+    IEnumerator Timer()
+    {
+        int time = 30;
+        while (time > 0)
+        {
+            time -= 1;
+            _timer.text = time.ToString();
+            yield return new WaitForSeconds(1f);
+        }
+        _textPassed.text = "Викторина провалена";
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
+
+        yield return new WaitForSeconds(1f);
+        _textPassed.text = "Проверить";
+        _canvasGroup.interactable = true;
+        _canvasGroup.blocksRaycasts = true;
+        CreateQuiz();
+        StartCoroutine(Timer());
+        _promptBtn.SetActive(true);
+    }
+
     IEnumerator WrongAnswer()
     {
         _textPassed.text = "Неправильная последовательность ответов";
@@ -147,5 +183,6 @@ public class Quiz : MonoBehaviour
         _textPassed.gameObject.SetActive(true);
         yield return new WaitForSeconds(1.5f);
         _quizGameObject.SetActive(false);
+        _sight.CloseSight();
     }
 }

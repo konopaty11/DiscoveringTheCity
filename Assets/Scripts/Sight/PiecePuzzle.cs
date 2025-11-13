@@ -30,12 +30,12 @@ public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         Vector2 _position = _puzzle.GetClosestPosition(_rectTransform.position, _index);
         _rectTransform.position = _position;
+        _puzzle.SetRotation(_index, (int)_rectTransform.eulerAngles.z);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         _rectTransform.eulerAngles = new(_rectTransform.eulerAngles.x, _rectTransform.eulerAngles.y, _rectTransform.eulerAngles.z + 90f);
-        Debug.Log(_rectTransform.eulerAngles.z);
         _puzzle.SetRotation(_index, (int)_rectTransform.eulerAngles.z);
     }
 }

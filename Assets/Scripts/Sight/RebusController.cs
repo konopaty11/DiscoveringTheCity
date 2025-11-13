@@ -26,7 +26,6 @@ public class RebusController : MonoBehaviour
     public void CheckAnswer()
     {
         if (_isDecided) return;
-        _isDecided = true;
 
         if (_rightAnswer != _inputField.text)
         {
@@ -34,6 +33,7 @@ public class RebusController : MonoBehaviour
             return;
         }
 
+        _isDecided = true;
         _imageInputField.color = Color.green;
         _inputField.text = "Ребус завершен";
         _sight.CountPassedPuzzels++;
@@ -45,5 +45,6 @@ public class RebusController : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         _rebus.SetActive(false);
+        _sight.StartQuiz();
     }
 }

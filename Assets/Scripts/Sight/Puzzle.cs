@@ -6,16 +6,18 @@ using UnityEngine.UI;
 
 public class Puzzle : MonoBehaviour
 {
+    [SerializeField] Sight _sight;
     [SerializeField] List<PuzzlePieceSerializable> _pieces;
     [SerializeField] Text _checkText;
+    [SerializeField] GameObject _puzzleWindow;
 
-    [System.Serializable]
+    [Serializable]
     class PuzzlePieceSerializable
     {
         public RectTransform rectTransform;
-        [NonSerialized] public int index = -1;
+        public int index = -1;
         [NonSerialized] public bool isEmpty = true;
-        [NonSerialized] public int zRotation;
+        public int zRotation = -1;
         public Image image;
     }
 
@@ -27,9 +29,9 @@ public class Puzzle : MonoBehaviour
                 _piece.isEmpty = true;
 
             if (_piece.isEmpty)
-                _piece.image.color = new(0, 1, 0, 0.3f);
+                _piece.image.color = new(0, 1, 0, 0.5f);
             else
-                _piece.image.color = new(1, 0, 0, 0.3f);
+                _piece.image.color = new(1, 0, 0, 0.5f);
         }
     }
 
@@ -55,19 +57,19 @@ public class Puzzle : MonoBehaviour
         float _distanceThresold = 2f;
         float _minDistance = Vector2.Distance(_position, _pieces[0].rectTransform.position);
         float _distance;
-        int _indexPiece = 0;
+        int _indexPiece = -1;
 
         for (int i = 0; i < _pieces.Count; i++)
         {
             _distance = Vector2.Distance(_position, _pieces[i].rectTransform.position);
-            if (_distance < _minDistance && _pieces[i].isEmpty)
+            if (_distance <= _minDistance && _pieces[i].isEmpty)
             {
                 _indexPiece = i;
                 _minDistance = _distance;
             }
         }
 
-        if (_minDistance > _distanceThresold)
+        if (_minDistance > _distanceThresold || _indexPiece == -1)
             return _position;
 
         for (int i = 0; i < _pieces.Count; i++)
@@ -95,11 +97,26 @@ public class Puzzle : MonoBehaviour
         }
 
         _checkText.text = "Пазл пройден";
+        _sight.CountPassedPuzzels++;
+        StartCoroutine(ClosePuzzle());
+    }
+
+    IEnumerator ClosePuzzle()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        if (_sight.IsPuzzleEnd)
+            _sight.StartRebus();
+        else
+            _sight.StartPuzzle();
+        _puzzleWindow.SetActive(false);
+
     }
 
     IEnumerator WrongPuzzle()
     {
         _checkText.text = "Пазл неправильный";
         yield return new WaitForSeconds(1f);
+        _checkText.text = "Проверить";
     }
 }
