@@ -4,8 +4,12 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// класс викторины
+/// </summary>
 public class Quiz : MonoBehaviour
 {
+    [SerializeField] WinWindowController _winWindow;
     [SerializeField] Sight _sight;
     [SerializeField] GameObject _quizGameObject;
     [SerializeField] Text _textPassed;
@@ -34,24 +38,36 @@ public class Quiz : MonoBehaviour
 
     Coroutine _timerCoroutine;
 
+    bool _isPassed;
+
     void Start()
     {
         CreateQuiz();
     }
 
-    void OnEnable()
+    /// <summary>
+    /// начало таймера
+    /// </summary>
+    public void StartTimer()
     {
-        _timerCoroutine = StartCoroutine(Timer());
+        if (!_isPassed)
+            _timerCoroutine = StartCoroutine(Timer());
     }
 
+    /// <summary>
+    /// установление режима просмотра викторины
+    /// </summary>
     public void SetPassed()
     {
+        _isPassed = true;
         _nonPassedWindow.SetActive(false);
         _passedWindow.SetActive(true);
-        StopCoroutine(_timerCoroutine);
     }
 
-
+    /// <summary>
+    /// передвтжение ответа вверх
+    /// </summary>
+    /// <param name="_text"> текст ответа </param>
     public void MoveUpAnswer(Text _text)
     {
         int _index = 0;
@@ -73,6 +89,10 @@ public class Quiz : MonoBehaviour
         }
     }
 
+    /// <summary>
+    ///  передвижение ответа вниз 
+    /// </summary>
+    /// <param name="_text"> текст ответа </param>
     public void MoveDownAnswer(Text _text)
     {
         for (int i = 0; i < _answers.Count; i++)
@@ -86,6 +106,9 @@ public class Quiz : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// логика подсказки 50 на 50
+    /// </summary>
     public void Prompt()
     {
         _promptBtn.SetActive(false);
@@ -110,6 +133,9 @@ public class Quiz : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// —оздание викторины
+    /// </summary>
     public void CreateQuiz()
     {
         _usedQuiz = new();
@@ -144,6 +170,9 @@ public class Quiz : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// проверка правильности викторины
+    /// </summary>
     public void CheckQuiz()
     {
         for (int i = 0; i < _usedQuiz.Count; i++)
@@ -160,6 +189,10 @@ public class Quiz : MonoBehaviour
         StartCoroutine(CloseQuiz());
     }
 
+    /// <summary>
+    /// корутина таймера
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Timer()
     {
         int time = 30;
@@ -182,6 +215,10 @@ public class Quiz : MonoBehaviour
         _promptBtn.SetActive(true);
     }
 
+    /// <summary>
+    /// Ћогика неправильного ответа викторины
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WrongAnswer()
     {
         _textPassed.text = "Ќеправильна€ последовательность ответов";
@@ -189,14 +226,25 @@ public class Quiz : MonoBehaviour
         _textPassed.text = "ѕроверить";
     }
 
+    /// <summary>
+    /// закрытие викторины
+    /// </summary>
+    /// <returns></returns>
     IEnumerator CloseQuiz()
     {
+        _winWindow.ShowWindow("¬икторина пройдена");
+        StopCoroutine(_timerCoroutine);
         _textPassed.text = "¬икторина пройдена";
         _textPassed.gameObject.SetActive(true);
         yield return new WaitForSeconds(1.5f);
+        _winWindow.HideWindow();
+        SetPassed();
         Continue();
     }
 
+    /// <summary>
+    /// продолжить (в режиме просмотра)
+    /// </summary>
     public void Continue()
     {
         _quizGameObject.SetActive(false);

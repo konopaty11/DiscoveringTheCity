@@ -7,6 +7,7 @@ using UnityEngine.UI;
 /// </summary>
 public class RebusController : MonoBehaviour
 {
+    [SerializeField] WinWindowController _winWindow;
     [SerializeField] Sight _sight;
     [SerializeField] GameObject _rebus;
     [SerializeField] string _rightAnswer;
@@ -17,6 +18,9 @@ public class RebusController : MonoBehaviour
 
     bool _isDecided = false;
 
+    /// <summary>
+    /// установить режим просмотра для ребуса
+    /// </summary>
     public void SetPassed()
     {
         _nonPassedWindow.SetActive(false);
@@ -44,12 +48,22 @@ public class RebusController : MonoBehaviour
         StartCoroutine(CloseRebus());
     }
 
+    /// <summary>
+    /// закрытие ребуса
+    /// </summary>
+    /// <returns></returns>
     IEnumerator CloseRebus()
     {
+        _winWindow.ShowWindow("Ребус пройден");
         yield return new WaitForSeconds(1.5f);
+        _winWindow.HideWindow();
+        SetPassed();
         Continue();
     }
 
+    /// <summary>
+    /// продолжить (в режиме просмотра)
+    /// </summary>
     public void Continue()
     {
         _rebus.SetActive(false);

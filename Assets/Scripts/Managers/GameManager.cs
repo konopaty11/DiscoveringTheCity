@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// основной менеджер
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [SerializeField] List<Sight> _sights;
@@ -16,6 +19,9 @@ public class GameManager : MonoBehaviour
         UpdateProgress();
     }
 
+    /// <summary>
+    /// обновление прогресса
+    /// </summary>
     public void UpdateProgress()
     {
         float _newProgress = 0f;
@@ -28,6 +34,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(InterpolateToNewProgress(_newProgress));
     }
 
+    /// <summary>
+    /// корутина анимации прогресса
+    /// </summary>
+    /// <param name="_newProgress"> новое значение прогресса </param>
+    /// <returns></returns>
     IEnumerator InterpolateToNewProgress(float _newProgress)
     {
         float _duration = 0.5f;

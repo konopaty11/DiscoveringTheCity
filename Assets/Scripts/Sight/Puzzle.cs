@@ -4,8 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// игра пазл
+/// </summary>
 public class Puzzle : MonoBehaviour
 {
+    [SerializeField] WinWindowController _winWindow;
     [SerializeField] Sight _sight;
     [SerializeField] List<PuzzlePieceSerializable> _pieces;
     [SerializeField] Text _checkText;
@@ -23,12 +27,19 @@ public class Puzzle : MonoBehaviour
         public Image image;
     }
 
+    /// <summary>
+    /// сделать пазл сданным
+    /// </summary>
     public void SetPassed()
     {
         _nonPassedWindow.SetActive(false);
         _passedWindow.SetActive(true);
     }
 
+    /// <summary>
+    /// показывать свободные места для размещения деталей
+    /// </summary>
+    /// <param name="_index"> индекс детали </param>
     public void ShowEmptyPlaces(int _index)
     {
         foreach (PuzzlePieceSerializable _piece in _pieces)
@@ -43,6 +54,12 @@ public class Puzzle : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// установление вращения 
+    /// </summary>
+    /// <param name="_index"> индекс детали </param>
+    /// <param name="_zRotation"> новое вращение </param>
     public void SetRotation(int _index, int _zRotation)
     {
         foreach (PuzzlePieceSerializable _piece in _pieces)
@@ -52,6 +69,9 @@ public class Puzzle : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// убрать подсказки свободных мест
+    /// </summary>
     public void HideEmptyPlaces()
     {
         foreach (PuzzlePieceSerializable _piece in _pieces)
@@ -60,6 +80,12 @@ public class Puzzle : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// получить ближайшую позицию
+    /// </summary>
+    /// <param name="_position"> текущая позиция </param>
+    /// <param name="_index"> индекс детали </param>
+    /// <returns> новая позиция </returns>
     public Vector2 GetClosestPosition(Vector2 _position, int _index)
     {
         float _distanceThresold = 2f;
@@ -93,6 +119,9 @@ public class Puzzle : MonoBehaviour
         return _position;
     }
 
+    /// <summary>
+    /// проверка корректности пазла
+    /// </summary>
     public void CheckPuzzle()
     {
         for (int i = 0; i < _pieces.Count; i++)
@@ -109,14 +138,24 @@ public class Puzzle : MonoBehaviour
         StartCoroutine(ClosePuzzle());
     }
 
+    /// <summary>
+    /// закрыть пазл
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ClosePuzzle()
     {
+        _winWindow.ShowWindow("Пазл пройден");
         yield return new WaitForSeconds(1.5f);
+        _winWindow.HideWindow();
 
+        SetPassed();
         Continue();
-
     }
 
+    /// <summary>
+    /// логика некорретного пазла 
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WrongPuzzle()
     {
         _checkText.text = "Пазл неправильный";
@@ -124,6 +163,9 @@ public class Puzzle : MonoBehaviour
         _checkText.text = "Проверить";
     }
 
+    /// <summary>
+    /// продолжить (в режиме просмотра)
+    /// </summary>
     public void Continue()
     {
         if (_sight.IsPuzzleEnd)

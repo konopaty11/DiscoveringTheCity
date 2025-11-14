@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// класс сериализации данных
+/// </summary>
 [Serializable]
 public class SavesData
 {
@@ -8,10 +11,11 @@ public class SavesData
     public bool soundOn = true;
 
     public List<SightSaves> sightsSaves = new();
-
-    
 }
 
+/// <summary>
+/// дополнительный класс сериализации выполненных заданий для достопримечательности
+/// </summary>
 [Serializable]
 public class SightSaves
 {

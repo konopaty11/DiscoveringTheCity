@@ -3,11 +3,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// менеджер звуковых эффектов
+/// </summary>
 public class SoundManager : MonoBehaviour
 {
     [SerializeField] Saves _saves;
     [SerializeField] AudioSource _musicAudioSource;
-    [SerializeField] AudioClip _clip;
+    [SerializeField] AudioSource _soundAudioSource;
     [SerializeField] Image _musicImage;
     [SerializeField] Image _soundImage;
     [SerializeField] Sprite _onMusicSprite;
@@ -18,7 +21,6 @@ public class SoundManager : MonoBehaviour
     bool _isMusicOn = false;
     bool _isSoundOn = true;
     List<Button> _buttons;
-    List<AudioSource> _audioSources = new();
 
     void OnEnable()
     {
@@ -35,24 +37,27 @@ public class SoundManager : MonoBehaviour
         _buttons = FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
         foreach (Button _button in _buttons)
         {
-            AudioSource _audioSource = _button.gameObject.AddComponent<AudioSource>();
-            _audioSources.Add(_audioSource);
-            _audioSource.clip = _clip;
-            _audioSource.playOnAwake = false;
-
-            _button.onClick.AddListener(_audioSource.Play);
+            _button.onClick.AddListener(_soundAudioSource.Play);
         }
     }
 
+    /// <summary>
+    /// восстановление данных
+    /// </summary>
     void RestoreSettings()
     {
         _isMusicOn = _saves.SavesData.musicOn;
         _isSoundOn = _saves.SavesData.soundOn;
 
-        MusicClick();
-        SoundClick();
+        _musicAudioSource.volume = _isMusicOn ? 1 : 0;
+        _soundAudioSource.volume = _isSoundOn ? 1 : 0;
+        _musicImage.sprite = _isMusicOn ? _onMusicSprite : _offMusicSprite;
+        _soundImage.sprite = _isSoundOn ? _onSoundSprite : _offSoundSprite;
     }
 
+    /// <summary>
+    /// нажатие на кнопку включения, выключения музыки
+    /// </summary>
     public void MusicClick()
     {
         if (_isMusicOn)
@@ -66,9 +71,14 @@ public class SoundManager : MonoBehaviour
             _musicImage.sprite = _onMusicSprite;
         }
 
+        _saves.SavesData.musicOn = _isMusicOn;
+        _saves.Save();
         _musicAudioSource.volume = _isMusicOn ? 1 : 0;
     }
 
+    /// <summary>
+    /// нажатие на кнопку включения, выключения звуков
+    /// </summary>
     public void SoundClick()
     {
         if (_isSoundOn)
@@ -82,9 +92,8 @@ public class SoundManager : MonoBehaviour
             _soundImage.sprite = _onSoundSprite;
         }
 
-        foreach (AudioSource _audioSource in _audioSources)
-        {
-            _audioSource.volume = _isSoundOn ? 1 : 0;
-        }
+        _saves.SavesData.soundOn = _isSoundOn;
+        _saves.Save();
+        _soundAudioSource.volume = _isSoundOn ? 1 : 0;
     }
 }

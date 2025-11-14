@@ -2,6 +2,9 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// Логика сохранения
+/// </summary>
 public class Saves : MonoBehaviour
 {
     public SavesData SavesData;
@@ -16,13 +19,15 @@ public class Saves : MonoBehaviour
         Load();
     }
 
+    /// <summary>
+    /// загрузка данных
+    /// </summary>
     void Load()
     {
         _path = Path.Combine(Application.persistentDataPath, _fileName);
         if (File.Exists(_path))
         {
             SavesData = JsonUtility.FromJson<SavesData>(File.ReadAllText(_path)) ?? new SavesData();
-            Debug.Log(SavesData);
         }
         else
         {
@@ -30,10 +35,14 @@ public class Saves : MonoBehaviour
             File.Create(_path).Dispose();
             SavesData = new SavesData();
         }
-
         DataLoad?.Invoke();
     }
 
+    /// <summary>
+    /// сохранение сделанных задач
+    /// </summary>
+    /// <param name="_index"></param>
+    /// <param name="_countPassedTasks"></param>
     public void SaveCountPassedTasks(int _index, int _countPassedTasks)
     {
         foreach (SightSaves _sightSaves in SavesData.sightsSaves)
@@ -50,6 +59,9 @@ public class Saves : MonoBehaviour
         Save();
     }
 
+    /// <summary>
+    /// общее сохранение
+    /// </summary>
     public void Save()
     {
         string _jsonData = JsonUtility.ToJson(SavesData);
