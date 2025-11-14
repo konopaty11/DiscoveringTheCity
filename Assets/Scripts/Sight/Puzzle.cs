@@ -10,6 +10,8 @@ public class Puzzle : MonoBehaviour
     [SerializeField] List<PuzzlePieceSerializable> _pieces;
     [SerializeField] Text _checkText;
     [SerializeField] GameObject _puzzleWindow;
+    [SerializeField] GameObject _nonPassedWindow;
+    [SerializeField] GameObject _passedWindow;
 
     [Serializable]
     class PuzzlePieceSerializable
@@ -19,6 +21,12 @@ public class Puzzle : MonoBehaviour
         [NonSerialized] public bool isEmpty = true;
         public int zRotation = -1;
         public Image image;
+    }
+
+    public void SetPassed()
+    {
+        _nonPassedWindow.SetActive(false);
+        _passedWindow.SetActive(true);
     }
 
     public void ShowEmptyPlaces(int _index)
@@ -105,11 +113,7 @@ public class Puzzle : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-        if (_sight.IsPuzzleEnd)
-            _sight.StartRebus();
-        else
-            _sight.StartPuzzle();
-        _puzzleWindow.SetActive(false);
+        Continue();
 
     }
 
@@ -118,5 +122,14 @@ public class Puzzle : MonoBehaviour
         _checkText.text = "Пазл неправильный";
         yield return new WaitForSeconds(1f);
         _checkText.text = "Проверить";
+    }
+
+    public void Continue()
+    {
+        if (_sight.IsPuzzleEnd)
+            _sight.StartRebus();
+        else
+            _sight.StartPuzzle();
+        _puzzleWindow.SetActive(false);
     }
 }

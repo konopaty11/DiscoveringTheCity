@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
+    [SerializeField] Saves _saves;
     [SerializeField] AudioSource _musicAudioSource;
     [SerializeField] AudioClip _clip;
     [SerializeField] Image _musicImage;
@@ -19,6 +20,16 @@ public class SoundManager : MonoBehaviour
     List<Button> _buttons;
     List<AudioSource> _audioSources = new();
 
+    void OnEnable()
+    {
+        Saves.DataLoad += RestoreSettings;
+    }
+
+    void OnDisable()
+    {
+        Saves.DataLoad -= RestoreSettings;
+    }
+
     void Start()
     {
         _buttons = FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
@@ -31,6 +42,15 @@ public class SoundManager : MonoBehaviour
 
             _button.onClick.AddListener(_audioSource.Play);
         }
+    }
+
+    void RestoreSettings()
+    {
+        _isMusicOn = _saves.SavesData.musicOn;
+        _isSoundOn = _saves.SavesData.soundOn;
+
+        MusicClick();
+        SoundClick();
     }
 
     public void MusicClick()

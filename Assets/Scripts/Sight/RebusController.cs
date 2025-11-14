@@ -11,13 +11,16 @@ public class RebusController : MonoBehaviour
     [SerializeField] GameObject _rebus;
     [SerializeField] string _rightAnswer;
     [SerializeField] InputField _inputField;
+    [SerializeField] GameObject _passedWindow;
+    [SerializeField] GameObject _nonPassedWindow;
+    [SerializeField] Image _imageInputField;
 
     bool _isDecided = false;
-    Image _imageInputField;
 
-    void Start()
+    public void SetPassed()
     {
-        _imageInputField = _inputField.GetComponent<Image>();
+        _nonPassedWindow.SetActive(false);
+        _passedWindow.SetActive(true);
     }
 
     /// <summary>
@@ -44,6 +47,11 @@ public class RebusController : MonoBehaviour
     IEnumerator CloseRebus()
     {
         yield return new WaitForSeconds(1.5f);
+        Continue();
+    }
+
+    public void Continue()
+    {
         _rebus.SetActive(false);
         _sight.StartQuiz();
     }

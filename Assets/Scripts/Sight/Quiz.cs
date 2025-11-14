@@ -15,6 +15,8 @@ public class Quiz : MonoBehaviour
     [SerializeField] GameObject _promptBtn;
     [SerializeField] CanvasGroup _canvasGroup;
     [SerializeField] Text _timer;
+    [SerializeField] GameObject _passedWindow;
+    [SerializeField] GameObject _nonPassedWindow;
  
     [System.Serializable]
     class QuizSerializable
@@ -30,6 +32,8 @@ public class Quiz : MonoBehaviour
     List<QuizSerializable> _quiz;
     List<QuizSerializable> _usedQuiz = new();
 
+    Coroutine _timerCoroutine;
+
     void Start()
     {
         CreateQuiz();
@@ -37,8 +41,16 @@ public class Quiz : MonoBehaviour
 
     void OnEnable()
     {
-        StartCoroutine(Timer());
+        _timerCoroutine = StartCoroutine(Timer());
     }
+
+    public void SetPassed()
+    {
+        _nonPassedWindow.SetActive(false);
+        _passedWindow.SetActive(true);
+        StopCoroutine(_timerCoroutine);
+    }
+
 
     public void MoveUpAnswer(Text _text)
     {
@@ -182,6 +194,11 @@ public class Quiz : MonoBehaviour
         _textPassed.text = "Викторина пройдена";
         _textPassed.gameObject.SetActive(true);
         yield return new WaitForSeconds(1.5f);
+        Continue();
+    }
+
+    public void Continue()
+    {
         _quizGameObject.SetActive(false);
         _sight.CloseSight();
     }
