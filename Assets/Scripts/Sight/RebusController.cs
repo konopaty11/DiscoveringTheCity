@@ -34,7 +34,7 @@ public class RebusController : MonoBehaviour
     {
         if (_isDecided) return;
 
-        if (_rightAnswer != _inputField.text)
+        if (_rightAnswer.ToLower() != _inputField.text.ToLower())
         {
             _imageInputField.color = Color.red;
             return;
