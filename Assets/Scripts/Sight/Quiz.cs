@@ -248,6 +248,6 @@ public class Quiz : MonoBehaviour
     public void Continue()
     {
         _quizGameObject.SetActive(false);
-        _sight.CloseSight();
+        //_sight.CloseSight();
     }
 }

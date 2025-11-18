@@ -134,7 +134,7 @@ public class Puzzle : MonoBehaviour
         }
 
         _checkText.text = "Пазл пройден";
-        _sight.CountPassedPuzzels++;
+        _sight.CountPassedPuzzles++;
         StartCoroutine(ClosePuzzle());
     }
 
@@ -168,10 +168,10 @@ public class Puzzle : MonoBehaviour
     /// </summary>
     public void Continue()
     {
-        if (_sight.IsPuzzleEnd)
-            _sight.StartRebus();
-        else
-            _sight.StartPuzzle();
+        //if (_sight.IsPuzzleEnd)
+        //    _sight.StartRebus();
+        //else
+        //    _sight.StartPuzzle();
         _puzzleWindow.SetActive(false);
     }
 }

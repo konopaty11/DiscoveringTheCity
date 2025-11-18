@@ -20,11 +20,15 @@ public class SavesData
 public class SightSaves
 {
     public int index;
-    public int countPassedTasks;
+    public int countPassedPuzzles;
+    public int countPassedRebuses;
+    public int countPassedQuizs;
 
-    public SightSaves (int _index, int _countPassedTasks)
+    public SightSaves(int _index, int _countPassedPuzzles, int _countPassedRebuses, int _countPassedQuizs)
     {
         index = _index;
-        countPassedTasks = _countPassedTasks;
+        countPassedPuzzles = _countPassedPuzzles;
+        countPassedRebuses = _countPassedRebuses;
+        countPassedQuizs = _countPassedQuizs;
     }
 }

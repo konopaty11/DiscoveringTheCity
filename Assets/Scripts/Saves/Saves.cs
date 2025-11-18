@@ -43,19 +43,22 @@ public class Saves : MonoBehaviour
     /// </summary>
     /// <param name="_index"></param>
     /// <param name="_countPassedTasks"></param>
-    public void SaveCountPassedTasks(int _index, int _countPassedTasks)
+    public void SaveCountPassedTasks(int _index, int _countPassedPuzzles, int _countPassedRebuses, int _countPassedQuizs)
     {
         foreach (SightSaves _sightSaves in SavesData.sightsSaves)
         {
             if (_sightSaves.index == _index)
             {
-                _sightSaves.countPassedTasks = _countPassedTasks;
+                _sightSaves.countPassedPuzzles = _countPassedPuzzles;
+                _sightSaves.countPassedRebuses = _countPassedRebuses;
+                _sightSaves.countPassedQuizs = _countPassedQuizs;
+
                 Save();
                 return;
             }
         }
 
-        SavesData.sightsSaves.Add(new SightSaves(_index, _countPassedTasks));
+        SavesData.sightsSaves.Add(new SightSaves(_index, _countPassedPuzzles, _countPassedRebuses, _countPassedQuizs));
         Save();
     }
 

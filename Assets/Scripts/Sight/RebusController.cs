@@ -43,7 +43,7 @@ public class RebusController : MonoBehaviour
         _isDecided = true;
         _imageInputField.color = Color.green;
         _inputField.text = "Ребус завершен";
-        _sight.CountPassedPuzzels++;
+        _sight.CountPassedRebuses++;
 
         StartCoroutine(CloseRebus());
     }
@@ -67,6 +67,6 @@ public class RebusController : MonoBehaviour
     public void Continue()
     {
         _rebus.SetActive(false);
-        _sight.StartQuiz();
+        //_sight.StartQuiz();
     }
 }

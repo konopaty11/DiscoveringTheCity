@@ -16,20 +16,26 @@ public class Sight : MonoBehaviour
     [SerializeField] ShowUIController _uiController;
     [SerializeField] List<Puzzle> _easyPuzzles;
     [SerializeField] List<Puzzle> _hardPuzzles;
-    [SerializeField] RebusController _rebus;
-    [SerializeField] Quiz _quiz;
-    [SerializeField] Text _puzzels;
-    [SerializeField] Text _quizs;
+    [SerializeField] List<RebusController> _rebuses;
+    [SerializeField] List<Quiz> _quizs;
+    [SerializeField] Text jigsawText;
+    [SerializeField] Text _quizText;
     [SerializeField] Image _background;
     [SerializeField] List<GameObject> _easyPuzzleObjects;
     [SerializeField] List<GameObject> _hardPuzzleObjects;
-    [SerializeField] GameObject _rebusObject;
-    [SerializeField] GameObject _quizObject;
+    [SerializeField] List<GameObject> _rebusObjects;
+    [SerializeField] List<GameObject> _quizObjects;
 
     string _puzzelsPattern;
     string _quizsPattern;
 
-    int _countPassedPuzzels;
+    Puzzle _easyPuzzle;
+    Puzzle _hardPuzzle;
+    GameObject _easyPuzzleObject;
+    GameObject _hardPuzzleObject;
+
+    int _countPassedPuzzles;
+    int _countPassedRebuses;
     int _countPassedQuizs;
 
     bool _isHardPuzzle = false;
@@ -40,14 +46,38 @@ public class Sight : MonoBehaviour
     RectTransform _rectTransfrom;
 
     public bool IsPuzzleEnd { get; private set; } = false;
-    public int CountPassedPuzzels { get => _countPassedPuzzels; set => SetCountPassedPuzzels(value); }
+
+    public int CountPassedPuzzles 
+    { 
+        get => _countPassedPuzzles; 
+        set
+        {
+            _countPassedPuzzles = value; 
+            SetCountPassedQuizs(value);
+        } 
+    }
+    public int CountPassedRebuses
+    {
+        get => _countPassedRebuses;
+        set
+        {
+            _countPassedRebuses = value;
+            SetCountPassedJigsaws();
+        }
+    }
     public int CountPassedQuizs { get => _countPassedQuizs; set => SetCountPassedQuizs(value); }
-    public int CountPassedTasks => CountPassedPuzzels + CountPassedQuizs;
+    public int CountPassedJigsaws => CountPassedPuzzles + CountPassedRebuses;
+    public int CountPassedTasks => _countPassedPuzzles + _countPassedRebuses + CountPassedQuizs;
 
     void OnEnable()
     {
-        _puzzelsPattern = _puzzels.text;
-        _quizsPattern = _quizs.text;
+        _easyPuzzle = _easyPuzzles[Random.Range(0, _easyPuzzles.Count)];
+        if (_hardPuzzles.Count != 0)
+            _hardPuzzle = _hardPuzzles[Random.Range(0, _hardPuzzles.Count)];
+
+        _puzzelsPattern = jigsawText.text;
+        _quizsPattern = _quizText.text;
+
         Saves.DataLoad += RestoreData;
     }
 
@@ -75,47 +105,32 @@ public class Sight : MonoBehaviour
         {
             if (_sightSaves.index == _savesIndex)
             {
-                if (_sightSaves.countPassedTasks == 4)
-                {
-                    CountPassedQuizs = 1;
-                    CountPassedPuzzels = 3;
-                }
-                else
-                    CountPassedPuzzels = _sightSaves.countPassedTasks;
+                CountPassedPuzzles = _sightSaves.countPassedPuzzles;
+                CountPassedRebuses = _sightSaves.countPassedRebuses;
+                CountPassedQuizs = _sightSaves.countPassedQuizs;
             }
         }
 
-        if (CountPassedTasks >= 1)
-        {
-            foreach (Puzzle _puzzle in _easyPuzzles)
-            {
-                _puzzle.SetPassed();
-            }
-        }
-        if (CountPassedTasks >= 2)
-        {
-            foreach (Puzzle _puzzle in _hardPuzzles)
-            {
-                _puzzle.SetPassed();
-            }
-        }
-        if (CountPassedTasks >= 3)
-            _rebus.SetPassed();
-        if (CountPassedTasks >= 4)
-            _quiz.SetPassed();
+        if (CountPassedPuzzles == 1)
+            _easyPuzzle.SetPassed();
+        else
+            _hardPuzzle.SetPassed();
 
-        StartPuzzle();
+        for (int i = 0; i < CountPassedRebuses; i++)
+            _rebuses[i].SetPassed();
+
+        for (int i = 0; i < CountPassedQuizs; i++)
+            _quizs[i].SetPassed();
     }
 
     /// <summary>
     /// установить число сданных головоломок
     /// </summary>
-    /// <param name="_value"></param>
-    void SetCountPassedPuzzels(int _value)
+    void SetCountPassedJigsaws()
     {
-        _puzzels.text = _puzzelsPattern + _value.ToString();
-        _countPassedPuzzels = _value;
-        _saves.SaveCountPassedTasks(_savesIndex, CountPassedTasks);
+        jigsawText.text = _puzzelsPattern + CountPassedJigsaws.ToString();
+        _countPassedPuzzles = CountPassedJigsaws;
+        _saves.SaveCountPassedTasks(_savesIndex, CountPassedPuzzles, CountPassedRebuses, CountPassedQuizs);
     }
 
     /// <summary>
@@ -123,43 +138,37 @@ public class Sight : MonoBehaviour
     /// </summary>
     void SetCountPassedQuizs(int _value)
     {
-        _quizs.text = _quizsPattern + _value.ToString();
+        _quizText.text = _quizsPattern + _value.ToString();
         _countPassedQuizs = _value;
-        _saves.SaveCountPassedTasks(_savesIndex, CountPassedTasks);
+        _saves.SaveCountPassedTasks(_savesIndex, CountPassedPuzzles, CountPassedRebuses, CountPassedQuizs);
     }
 
     /// <summary>
     /// начало пазла
     /// </summary>
-    public void StartPuzzle()
+    public void StartPuzzle(bool _isEasy)
     {
-        if (_isHardPuzzle)
-        {
-            _hardPuzzleObjects[Random.Range(0, _hardPuzzleObjects.Count)].SetActive(true);
-            IsPuzzleEnd = true;
-        }
+        if (_isEasy)
+            _easyPuzzleObject.SetActive(true);
         else
-        {
-            _easyPuzzleObjects[Random.Range(0, _easyPuzzleObjects.Count)].SetActive(true);
-            _isHardPuzzle = true;
-        }
+            _hardPuzzleObject.SetActive(true);
     }
 
     /// <summary>
     /// начало ребуса
     /// </summary>
-    public void StartRebus()
+    public void StartRebus(int _index)
     {
-        _rebusObject.SetActive(true);
+        _rebusObjects[_index].SetActive(true);
     }
 
     /// <summary>
     /// начало головоломки
     /// </summary>
-    public void StartQuiz()
+    public void StartQuiz(int _index)
     {
-        _quiz.StartTimer();
-        _quizObject.SetActive(true);
+        _quizs[_index].StartTimer();
+        _quizObjects[_index].SetActive(true);
     }
 
     /// <summary>
@@ -171,6 +180,5 @@ public class Sight : MonoBehaviour
         _uiController.HideUI(_rectTransfrom);
         _isHardPuzzle = false;
         IsPuzzleEnd = false;
-        StartPuzzle();
     }
 }
