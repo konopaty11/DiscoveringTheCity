@@ -35,6 +35,10 @@ public class Saves : MonoBehaviour
             File.Create(_path).Dispose();
             SavesData = new SavesData();
         }
+        foreach (SightSaves _sightSaves in SavesData.sightsSaves)
+        {
+            Debug.Log($"LOAD puzz - {_sightSaves.countPassedPuzzles}; rebus - {_sightSaves.countPassedRebuses}; quiz - {_sightSaves.countPassedQuizs}");
+        }
         DataLoad?.Invoke();
     }
 
@@ -67,7 +71,12 @@ public class Saves : MonoBehaviour
     /// </summary>
     public void Save()
     {
+        foreach (SightSaves _sightSaves in SavesData.sightsSaves)
+        {
+            Debug.Log($"SAVE puzz - {_sightSaves.countPassedPuzzles}; rebus - {_sightSaves.countPassedRebuses}; quiz - {_sightSaves.countPassedQuizs}");
+        }
         string _jsonData = JsonUtility.ToJson(SavesData);
+        //Debug.Log(_jsonData);
         File.WriteAllText(_path, _jsonData);
     }
 }

@@ -68,5 +68,7 @@ public class RebusController : MonoBehaviour
     {
         _rebus.SetActive(false);
         //_sight.StartQuiz();
+        _sight.VisibilityButtonsControl(true);
+
     }
 }

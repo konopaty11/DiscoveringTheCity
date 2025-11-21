@@ -32,6 +32,7 @@ public class Puzzle : MonoBehaviour
     /// </summary>
     public void SetPassed()
     {
+        Debug.Log("puzzle passwssssssss");
         _nonPassedWindow.SetActive(false);
         _passedWindow.SetActive(true);
     }
@@ -173,5 +174,6 @@ public class Puzzle : MonoBehaviour
         //else
         //    _sight.StartPuzzle();
         _puzzleWindow.SetActive(false);
+        _sight.VisibilityButtonsControl(true);
     }
 }

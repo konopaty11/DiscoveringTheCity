@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// кусочек пазла
 /// </summary>
-public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler
+public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerUpHandler
 {
     [SerializeField] int _index;
     [SerializeField] Puzzle _puzzle;
@@ -29,6 +29,7 @@ public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        Debug.Log("sdfsdfsdf");
         _puzzle.HideEmptyPlaces();
 
         Vector2 _position = _puzzle.GetClosestPosition(_rectTransform.position, _index);
@@ -38,6 +39,12 @@ public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Debug.Log("dsf");
         _rectTransform.eulerAngles = new(_rectTransform.eulerAngles.x, _rectTransform.eulerAngles.y, _rectTransform.eulerAngles.z + 90f);
         _puzzle.SetRotation(_index, (int)_rectTransform.eulerAngles.z);
     }

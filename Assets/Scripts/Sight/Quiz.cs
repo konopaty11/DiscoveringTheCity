@@ -249,5 +249,7 @@ public class Quiz : MonoBehaviour
     {
         _quizGameObject.SetActive(false);
         //_sight.CloseSight();
+        _sight.VisibilityButtonsControl(true);
+
     }
 }
