@@ -26,6 +26,7 @@ public class Sight : MonoBehaviour
     [SerializeField] List<GameObject> _rebusObjects;
     [SerializeField] List<GameObject> _quizObjects;
     [SerializeField] List<GameObject> buttons;
+    [SerializeField] StarsController starsController;
 
     string _puzzelsPattern;
     string _quizsPattern;
@@ -80,13 +81,16 @@ public class Sight : MonoBehaviour
 
     void OnEnable()
     {
-        _easyPuzzle = _easyPuzzles[Random.Range(0, _easyPuzzles.Count)];
-        _easyPuzzleObject = _easyPuzzleObjects[Random.Range(0, _easyPuzzleObjects.Count)];
+        int _easyIndex = Random.Range(0, _easyPuzzles.Count);
+        int _hardIndex = Random.Range(0, _hardPuzzles.Count);
+
+        _easyPuzzle = _easyPuzzles[_easyIndex];
+        _easyPuzzleObject = _easyPuzzleObjects[_easyIndex];
         if (_hardPuzzles.Count != 0)
-            _hardPuzzle = _hardPuzzles[Random.Range(0, _hardPuzzles.Count)];
+            _hardPuzzle = _hardPuzzles[_hardIndex];
 
         if (_hardPuzzleObjects.Count != 0)
-            _hardPuzzleObject = _hardPuzzleObjects[Random.Range(0, _hardPuzzleObjects.Count)];
+            _hardPuzzleObject = _hardPuzzleObjects[_hardIndex];
 
         _puzzelsPattern = jigsawText.text;
         _quizsPattern = _quizText.text;
@@ -128,7 +132,7 @@ public class Sight : MonoBehaviour
             _easyPuzzle.SetPassed();
         else if (CountPassedPuzzles == 2)
         {
-            Debug.Log("sdf");
+            Debug.Log($"{_easyPuzzle.name} - {_hardPuzzle.name}");
             _easyPuzzle.SetPassed();
             _hardPuzzle.SetPassed();
         }
@@ -143,6 +147,7 @@ public class Sight : MonoBehaviour
 
         SetCountPassedJigsaws();
         SetCountPassedQuizs();
+        UpdateStars();
     }
 
     public void VisibilityButtonsControl(bool _visible)
@@ -208,9 +213,21 @@ public class Sight : MonoBehaviour
     /// </summary>
     public void CloseSight()
     {
+        UpdateStars();
         _gameManager.UpdateProgress();
         _uiController.HideUI(_rectTransfrom);
         _isHardPuzzle = false;
         IsPuzzleEnd = false;
+    }
+
+    void UpdateStars()
+    {
+        int _countPuzzles = _hardPuzzle != null ? 2 : 1;
+        starsController.UpdateStars
+            (
+                CountPassedPuzzles == _countPuzzles,
+                CountPassedRebuses == _rebuses.Count,
+                CountPassedQuizs == _quizs.Count
+            );
     }
 }

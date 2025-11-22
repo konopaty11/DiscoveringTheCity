@@ -4,13 +4,14 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// кусочек пазла
 /// </summary>
-public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerUpHandler
+public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
 {
     [SerializeField] int _index;
     [SerializeField] Puzzle _puzzle;
     [SerializeField] Canvas _canvas;
     
     RectTransform _rectTransform;
+    bool _isDrag = false;
 
     void Start()
     {
@@ -25,11 +26,12 @@ public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnDrag(PointerEventData eventData)
     {
         _rectTransform.anchoredPosition += eventData.delta * _canvas.scaleFactor;
+        _isDrag = true;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("sdfsdfsdf");
+        _isDrag = false;
         _puzzle.HideEmptyPlaces();
 
         Vector2 _position = _puzzle.GetClosestPosition(_rectTransform.position, _index);
@@ -37,14 +39,11 @@ public class PiecePuzzle : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         _puzzle.SetRotation(_index, (int)_rectTransform.eulerAngles.z);
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        
-    }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("dsf");
+        if (_isDrag) return;
+
         _rectTransform.eulerAngles = new(_rectTransform.eulerAngles.x, _rectTransform.eulerAngles.y, _rectTransform.eulerAngles.z + 90f);
         _puzzle.SetRotation(_index, (int)_rectTransform.eulerAngles.z);
     }

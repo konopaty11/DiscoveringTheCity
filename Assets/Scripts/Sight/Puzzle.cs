@@ -32,7 +32,6 @@ public class Puzzle : MonoBehaviour
     /// </summary>
     public void SetPassed()
     {
-        Debug.Log("puzzle passwssssssss");
         _nonPassedWindow.SetActive(false);
         _passedWindow.SetActive(true);
     }
@@ -89,7 +88,7 @@ public class Puzzle : MonoBehaviour
     /// <returns> новая позиция </returns>
     public Vector2 GetClosestPosition(Vector2 _position, int _index)
     {
-        float _distanceThresold = 2f;
+        float _distanceThresold = 1f;
         float _minDistance = Vector2.Distance(_position, _pieces[0].rectTransform.position);
         float _distance;
         int _indexPiece = -1;
