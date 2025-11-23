@@ -23,7 +23,7 @@ public class PlotController : MonoBehaviour
         for (int i = 0; i < _texts.Count; i++)
         {
             if (i == _sights.Count) break;
-            _texts[i].text = $"{_sights[i].title}. Решено головоломок: {_sights[i].sight.CountPassedPuzzles}, викторин: {_sights[i].sight.CountPassedQuizs}";
+            _texts[i].text = $"{_sights[i].title}. Решено головоломок: {_sights[i].sight.CountPassedJigsaws}, викторин: {_sights[i].sight.CountPassedQuizs}";
         }
     }
 }

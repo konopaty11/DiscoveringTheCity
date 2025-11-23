@@ -27,6 +27,7 @@ public class Sight : MonoBehaviour
     [SerializeField] List<GameObject> _quizObjects;
     [SerializeField] List<GameObject> buttons;
     [SerializeField] StarsController starsController;
+    [SerializeField] SightManager sightManager;
 
     string _puzzelsPattern;
     string _quizsPattern;
@@ -148,6 +149,7 @@ public class Sight : MonoBehaviour
         SetCountPassedJigsaws();
         SetCountPassedQuizs();
         UpdateStars();
+        sightManager.CheckPassed();
     }
 
     public void VisibilityButtonsControl(bool _visible)
@@ -214,6 +216,8 @@ public class Sight : MonoBehaviour
     public void CloseSight()
     {
         UpdateStars();
+        sightManager.CheckPassed();
+
         _gameManager.UpdateProgress();
         _uiController.HideUI(_rectTransfrom);
         _isHardPuzzle = false;

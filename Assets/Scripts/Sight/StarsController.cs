@@ -19,4 +19,14 @@ public class StarsController : MonoBehaviour
         for (int i = 0; i < _countStars; i++)
             stars[i].SetActive(true);
     }
+
+    public bool GetIsFull()
+    {
+        foreach (GameObject _star in stars)
+        {
+            if (!_star.activeSelf) return false;
+        }
+
+        return true;
+    }
 }
